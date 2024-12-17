@@ -1,0 +1,11 @@
+{
+  "name": "chilliandgarlic",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "satha",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  }
+}
