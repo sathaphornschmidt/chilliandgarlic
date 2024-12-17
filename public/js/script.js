@@ -1,4 +1,4 @@
-require('dotenv').config();
+
 // ตัวแปรเก็บสถานะการจอง
 const reservations = {}; // {'YYYY-MM-DD-HH:00': totalGuests}
 

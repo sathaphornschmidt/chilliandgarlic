@@ -74,7 +74,7 @@ nav ul li a:hover{
     justify-content: center; /* จัดฟอร์มให้อยู่ตรงกลางแนวนอน */
     align-items: center; /* จัดฟอร์มให้อยู่ตรงกลางแนวตั้ง */
     height: 100vh; /* ให้ background ครอบคลุมความสูงเต็มหน้าจอ */
-    background: url('../public/img/Rostock.jpg') no-repeat center center fixed;
+    background: url('../img/Rostock.jpg') no-repeat center center fixed;
     background-size: cover; /* ปรับขนาดภาพให้เต็มหน้าจอ */
     
     
@@ -351,7 +351,7 @@ background: rgb(245, 245, 245);
     justify-content: center; /* จัดฟอร์มให้อยู่ตรงกลางแนวนอน */
     align-items: center; /* จัดฟอร์มให้อยู่ตรงกลางแนวตั้ง */
     height: 100vh; /* ให้ background ครอบคลุมความสูงเต็มหน้าจอ */
-    background: url('../public/img/Ros.jpg') no-repeat center center fixed;
+    background: url('../img/Ros.jpg') no-repeat center center fixed;
     background-size: cover; /* ปรับขนาดภาพให้เต็มหน้าจอ */
 }
 
