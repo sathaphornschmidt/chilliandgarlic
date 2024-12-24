@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chilli'n Garlic</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script type="text/javascript"
         src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
     </script>
@@ -29,14 +30,18 @@
         <div class="logo">
             <li><a href="#rostock"><h2>Chilli'n Garlic</h2></a></li>
         </div>
-        <ul>
-            <!-- ไม่ได้ใช้ปุ่ม Home เพราะสามามรถกดที่ Logo แล้วกลับมาเริ่มต้นบนสุดของเว็ปไซต์ได้ -->
+
+        <ul id="menuLinks">
+        
         <li><a href="#menu-sections">MENU</a></li>
         <li><a href="#dessert-sections">DESSERT & BEVERAGES</a></li>
         <li><a href="#offers-sections">OFFERS</a></li>
         <li><a href="#aboutus-sections">ABOUT US</a></li>
         <li><a href="#reservation">RESERVATIONS</a></li>
-        <ul>
+        </ul>
+        <div class="menu-icon">
+            <i class="fa fa-bars" id="menuIcon" aria-hidden="true"></i>
+        </div>
     </nav>
 
     <section id="rostock" class="Rostock">
@@ -254,15 +259,15 @@
         <select id="time" required class="form-input">
             <option value="--:--">--:--</option>
             <option value="16:00">16:00</option>
-            <option value="16:30">16:30</option>
+            
             <option value="17:00">17:00</option>
-            <option value="17:30">17:30</option>
+            
             <option value="18:00">18:00</option>
-            <option value="18:30">18:30</option>
+            
             <option value="19:00">19:00</option>
-            <option value="19:30">19:30</option>
+            
             <option value="20:00">20:00</option>
-            <option value="20:30">20:30</option>
+            
             <option value="21:00">21:00</option>
         </select>
         </div>
@@ -320,40 +325,57 @@
 
     <!-- footer section -->
     <footer>
-        <div class="col col-1">
-            <h3>About Us</h3>
-            <p>Copyright © 2024 Chilli'n Garlic.
-                <br> Sathaphorn Schmidt & Alexander Schmidt<br>
-                Traditional Thai Restaurant In Rostock Germany. <br>
-            Arne Nies / Studio panorista / Digital marketing</p>
-        </div>
+            <div class="col col-1">
+                <h3>About Us</h3>
+                <p>Copyright © 2024 Chilli'n Garlic.
+                    <br> Sathaphorn Schmidt & Alexander Schmidt<br>
+                    Traditional Thai Restaurant In Rostock Germany. <br>
+                Arne Nies / Studio panorista / Digital marketing</p>
+            </div>
 
-        <div class="col">
-            <h3>Opening Hours</h3>
-            <p>Tuesday to Saturday 16:00 to 22:00</p>
-        </div>
+            <div class="col">
+                <h3>Opening Hours</h3>
+                <p>Tuesday to Saturday 16:00 to 22:00</p>
+            </div>
 
-        <div class="col">
-            <h3>Address</h3>
-            <ul>
-                <li><a href="https://maps.app.goo.gl/ju9oWXbtxyNyzuay5?g_st=com.google.maps.preview.copy">Chilli’n Garlic-Str. 17 · 18057 Rostock</a></li>
-                <li><a href="https://maps.app.goo.gl/ju9oWXbtxyNyzuay5?g_st=com.google.maps.preview.copy">Fritz-Reuter-Str. 17 · 18057 Rostock</a></li>
-            </ul>
-        </div>
+            <div class="col">
+                <h3>Address</h3>
+                <ul>
+                    <li><a href="https://maps.app.goo.gl/ju9oWXbtxyNyzuay5?g_st=com.google.maps.preview.copy">Chilli’n Garlic-Str. 17 · 18057 Rostock</a></li>
+                    <li><a href="https://maps.app.goo.gl/ju9oWXbtxyNyzuay5?g_st=com.google.maps.preview.copy">Fritz-Reuter-Str. 17 · 18057 Rostock</a></li>
+                </ul>
+            </div>
 
-        <div class="col">
-            <h3>Contact Us</h3>
-            <ul>
-                <li><a href="https://www.instagram.com/satha.laphrom/profilecard/?igsh=bTZtMzcwYmUzdzFr">Instagram</a></li>
-                <li><a href="https://www.facebook.com/share/qcKac8iyFdT5vuAz/?mibextid=LQQJ4d">Facebook</a></li>
-                <li><a href="https://rostock.catering/">Rostock.Catering</a></li>
-                <li><a href="https://fritzreuterstuben-rostock.de/">Fritzreuterstuben-Rostock</a></li>
-            </ul>
-        </div>
+            <div class="col">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li><a href="https://www.instagram.com/satha.laphrom/profilecard/?igsh=bTZtMzcwYmUzdzFr">Instagram</a></li>
+                    <li><a href="https://www.facebook.com/share/qcKac8iyFdT5vuAz/?mibextid=LQQJ4d">Facebook</a></li>
+                    <li><a href="https://rostock.catering/">Rostock.Catering</a></li>
+                    <li><a href="https://fritzreuterstuben-rostock.de/">Fritzreuterstuben-Rostock</a></li>
+                </ul>
+            </div>
 
     </footer>
 
-<!-- hello -->
+    <!-- ปรับแต่งเมนูบาร์สำหรับอุปกรณ์ขนาดเล็ก -->
+    <script>
+        let menuLinks = document.getElementById("menuLinks")
+        let menuIcon = document.getElementById("menuIcon")
+
+            menuLinks.style.maxHeight = "0px"
+            
+            menuIcon.addEventListener("click",() => {
+                if(menuLinks.style.maxHeight === "0px")
+            {
+                menuLinks.style.maxHeight = "350px"
+            }
+            else{
+                menuLinks.style.maxHeight = "0px"
+            }
+
+        })
+    </script>
 <!-- Include EmailJS SDK -->
 <script src="js/script.js"></script>
 </body>

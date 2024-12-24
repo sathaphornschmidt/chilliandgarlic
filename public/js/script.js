@@ -1,4 +1,4 @@
-
+// require('dotenv').config();
 // ตัวแปรเก็บสถานะการจอง
 const reservations = {}; // {'YYYY-MM-DD-HH:00': totalGuests}
 
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
         reservations[reservationKey] += guests;
 
         // ส่งข้อมูลไปยัง EmailJS
-        emailjs.init(process.env.MAIL_JS_API_KEY); // Replace with your Public Key
+        emailjs.init("Vb78zKsE0g5OMGKeo"); // Replace with your Public Key
         const emailParams = {
             user_name: name,
             user_email: email,
