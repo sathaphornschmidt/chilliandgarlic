@@ -1,0 +1,51 @@
+.Res-detail {
+  height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 100px 4rem;
+  background: var(--bg-color);
+}
+
+.Res-detail .left {
+  width: 45%;
+}
+
+.Res-detail .left h1 {
+  font-size: 40px;
+}
+
+.Res-detail .left p {
+  font-size: 20px;
+  color: var(--text-detail-color);
+  padding-block: 20px;
+}
+
+.Res-detail .right {
+  width: 50%;
+}
+.Res-detail .right img {
+  width: 100%;
+}
+
+/* media query */
+@media (max-width: 1024px) {
+  .Res-detail {
+    flex-direction: column;
+    height: auto;
+    padding-top: 40px;
+    padding-bottom: 0;
+  }
+  .Res-detail .left,
+  .Res-detail .right {
+    width: 100%;
+  }
+
+  #Res-detail,
+  #menu-sections,
+  #dessert-sections,
+  #aboutus-sections,
+  #reservation {
+    padding: 40;
+  }
+}

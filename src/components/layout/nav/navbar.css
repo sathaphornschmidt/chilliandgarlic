@@ -1,0 +1,104 @@
+/* Navbar Container */
+nav {
+  background: var(--bg-color);
+  padding: 1rem 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  height: 65px;
+  z-index: 1000; /* Ensures Navbar stays above other content */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo Style */
+nav .logo h2 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Menu Links */
+nav ul {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  transition: max-height 0.3s ease-in-out;
+}
+
+nav ul li a {
+  font-size: 15px;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: color 0.3s ease;
+}
+
+/* Hover Effects for Links */
+nav ul li a::after {
+  content: "";
+  display: block;
+  width: 0;
+  height: 2px;
+  background: red;
+  margin-right: auto;
+  transition: width 0.5s ease;
+}
+
+nav ul li a:hover::after {
+  width: 100%;
+}
+
+nav ul li a:hover {
+  color: red;
+}
+
+/* Menu Icon for Mobile */
+.menu-icon {
+  display: none; /* Hide by default for larger screens */
+  cursor: pointer;
+  font-size: 24px;
+}
+
+/* Mobile Menu Behavior */
+@media (max-width: 1024px) {
+  nav ul {
+    position: absolute;
+    top: 65px;
+    left: 0;
+    right: 0;
+    gap: 15px;
+    background: var(--bg-color);
+    flex-direction: column;
+    max-height: 0; /* Collapsed by default */
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  nav ul.open {
+    max-height: 350px; /* Expand when menu is open */
+  }
+
+  nav ul li {
+    padding: 15px 20px;
+    text-align: center;
+  }
+
+  .menu-icon {
+    display: block; /* Show icon for smaller screens */
+  }
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--text-color);
+  background-color: var(--bg-color);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background-color: var(--text-color);
+  color: var(--bg-color);
+}

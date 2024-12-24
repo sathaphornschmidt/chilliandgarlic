@@ -1,0 +1,141 @@
+/* Reservation Section */
+#reservation {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 100vh; /* Full-screen height */
+  background: url('../img/Ros.jpg') no-repeat center center fixed;
+  background-size: cover; /* Cover entire screen */
+}
+
+/* Form Container */
+#reservation-form {
+  background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Form Header */
+#reservation-form h2 {
+  text-align: center;
+  font-size: 30px;
+  padding: 20px;
+}
+
+/* Form Labels */
+#reservation-form label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* Form Inputs */
+#reservation-form input,
+#reservation-form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+/* Focus Styles */
+#reservation-form input:focus,
+#reservation-form select:focus {
+  border-color: #4CAF50; /* Highlight with green */
+  background-color: #fff;
+  outline: none;
+}
+
+/* Form Button */
+#reservation-form button {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #4462ac;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#reservation-form button:hover {
+  background-color: #294ca5; /* Darker shade for hover effect */
+}
+
+/* Form Group */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-size: 16px;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+/* Dropdown */
+.form-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.form-input option {
+  font-size: 16px;
+}
+
+/* Alert Box */
+.alert-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(248, 215, 218, 0.9);
+  color: #721c24;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #f5c6cb;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  z-index: 1000;
+}
+
+/* Alert Button */
+.alert-box button {
+  margin-top: 10px;
+  background-color: #721c24;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.alert-box button:hover {
+  background-color: #a94442;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #reservation {
+      padding: 10px;
+  }
+
+  #reservation-form {
+      width: 90%;
+  }
+}
