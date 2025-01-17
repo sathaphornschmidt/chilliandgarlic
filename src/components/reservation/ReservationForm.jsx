@@ -13,6 +13,15 @@ const ReservationForm = () => {
     agreeToPDPA: false, // PDPA consent state
   });
 
+  const [availableTableTime, setAvailableTableTime] = useState({
+    "16:00": 0,
+    "17:00": 0,
+    "18:00": 0,
+    "19:00": 0,
+    "20:00": 0,
+    "21:00": 0,
+  });
+
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
     setFormData({
@@ -35,7 +44,9 @@ const ReservationForm = () => {
         return;
       }
     }
+
     setFormData({ ...formData, date: value });
+    handleGetAvailabilityTableOnDate(value);
   };
 
   const handleSubmit = async (e) => {
@@ -103,6 +114,27 @@ const ReservationForm = () => {
     });
   };
 
+  const handleGetAvailabilityTableOnDate = async (date) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5050/table-availability/${date}`
+      );
+      // Ensure the data format matches { "16:00": 2, "17:00": 0, ... }
+      setAvailableTableTime(response.data["table-availability"]);
+    } catch (error) {
+      console.error("Error fetching table availability:", error);
+      // Reset table availability in case of an error
+      setAvailableTableTime({
+        "16:00": 0,
+        "17:00": 0,
+        "18:00": 0,
+        "19:00": 0,
+        "20:00": 0,
+        "21:00": 0,
+      });
+    }
+  };
+
   return (
     <div id="reservation">
       <form id="reservation-form" onSubmit={handleSubmit}>
@@ -146,7 +178,11 @@ const ReservationForm = () => {
           value={formData.date}
           onChange={handleChangeDate}
           required
-          min={new Date().toISOString().split("T")[0]}
+          min={
+            new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+              .toISOString()
+              .split("T")[0]
+          }
         />
 
         <div className="form-group">
@@ -155,21 +191,21 @@ const ReservationForm = () => {
             id="time"
             value={formData.time}
             onChange={handleChange}
+            disabled={!formData.date}
             required
             className="form-input"
           >
             <option value="">--:--</option>
-            <option value="16:00">16:00</option>
-            <option value="16:30">16:30</option>
-            <option value="17:00">17:00</option>
-            <option value="17:30">17:30</option>
-            <option value="18:00">18:00</option>
-            <option value="18:30">18:30</option>
-            <option value="19:00">19:00</option>
-            <option value="19:30">19:30</option>
-            <option value="20:00">20:00</option>
-            <option value="20:30">20:30</option>
-            <option value="21:00">21:00</option>
+            {Object.entries(availableTableTime)?.map(([time, remaining]) => {
+              return (
+                remaining > 0 && (
+                  <option key={time} value={time}>
+                    {time} ({remaining} table{remaining > 1 ? "s" : ""}{" "}
+                    available)
+                  </option>
+                )
+              );
+            })}
           </select>
         </div>
 
