@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "./style.css"; // Import your CSS file
+import axios from "axios";
 
 const ReservationForm = () => {
-  // State Variables
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -10,37 +10,35 @@ const ReservationForm = () => {
     date: "",
     time: "",
     guests: 1,
+    agreeToPDPA: false, // PDPA consent state
   });
 
-  const [alertMessage, setAlertMessage] = useState("");
-  const [showAlert, setShowAlert] = useState(false);
-
-  // Handle Input Changes
   const handleChange = (e) => {
-    const { id, value } = e.target; 
-    
-    setFormData({ ...formData, [id]: value });
+    const { id, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [id]: type === "checkbox" ? checked : value, // Handle checkbox for PDPA
+    });
   };
 
   const handleChangeDate = (e) => {
-    const { id, value } = e.target; 
-
+    const { id, value } = e.target;
     if (id === "date") {
       const selectedDate = value;
-      if (!selectedDate) return; // ถ้ายังไม่ได้เลือกวันที่ไม่ต้องทำอะไร
+      if (!selectedDate) return;
 
-      const selectedDay = new Date(selectedDate).getDay(); // 0 = Sunday, 1 = Monday, 2-6 = Tuesday to Saturday
+      const selectedDay = new Date(selectedDate).getDay();
       if (selectedDay === 0 || selectedDay === 1) {
-          alert("Chilli and Garlic is Close on Sunday - Monday Please choose another day");
-          dateInput.value = ""; // เคลียร์วันที่ที่เลือก
+        alert(
+          "Chilli and Garlic is closed on Sundays and Mondays. Please choose another day."
+        );
+        return;
       }
     }
+    setFormData({ ...formData, date: value });
+  };
 
-    setFormData({ ...formData, "date": value });
-  }
-
-  // Handle Form Submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const selectedDate = new Date(formData.date);
@@ -50,21 +48,48 @@ const ReservationForm = () => {
 
     const day = selectedDate.getDay();
 
-    // Validation
-    if (selectedDate < today) {
-      setAlertMessage("You cannot select a past date. Please choose today's date or later.");
-      setShowAlert(true);
-      return;
-    }
-    if (day === 0 || day === 1) {
-      setAlertMessage("We are closed on Sundays and Mondays. Please choose another date.");
-      setShowAlert(true);
+    // Validation: Check PDPA consent
+    if (!formData.agreeToPDPA) {
+      alert(
+        "You must agree to the Privacy Policy before submitting your reservation."
+      );
       return;
     }
 
-    // Success
-    setAlertMessage("Your reservation has been submitted successfully!");
-    setShowAlert(true);
+    // Validation: Check date
+    if (selectedDate < today) {
+      alert(
+        "You cannot select a past date. Please choose today's date or later."
+      );
+      return;
+    }
+    if (day === 0 || day === 1) {
+      alert(
+        "We are closed on Sundays and Mondays. Please choose another date."
+      );
+      return;
+    }
+
+    // API Call
+    try {
+      const response = await axios.post("http://localhost:5050/reservations", {
+        reservation: {
+          name: formData.name,
+          email: formData.email,
+          country_code: "66",
+          phone: formData.phone,
+          date: formData.date,
+          time: formData.time,
+          number_of_guests: formData.guests,
+        },
+      });
+
+      alert("Your reservation has been submitted successfully!");
+      console.log(response.data);
+    } catch (error) {
+      alert("Failed to submit your reservation. Please try again.");
+      console.error(error);
+    }
 
     // Reset form
     setFormData({
@@ -74,12 +99,12 @@ const ReservationForm = () => {
       date: "",
       time: "",
       guests: 1,
+      agreeToPDPA: false, // Reset PDPA checkbox
     });
   };
 
   return (
     <div id="reservation">
-      {/* Reservation Form */}
       <form id="reservation-form" onSubmit={handleSubmit}>
         <h2>RESERVATIONS</h2>
         <br />
@@ -121,7 +146,7 @@ const ReservationForm = () => {
           value={formData.date}
           onChange={handleChangeDate}
           required
-          min={new Date().toISOString().split("T")[0]} // Prevent past dates
+          min={new Date().toISOString().split("T")[0]}
         />
 
         <div className="form-group">
@@ -135,15 +160,15 @@ const ReservationForm = () => {
           >
             <option value="">--:--</option>
             <option value="16:00">16:00</option>
-            <option value="16:00">16:30</option>
+            <option value="16:30">16:30</option>
             <option value="17:00">17:00</option>
-            <option value="16:00">17:30</option>
+            <option value="17:30">17:30</option>
             <option value="18:00">18:00</option>
-            <option value="16:00">18:30</option>
+            <option value="18:30">18:30</option>
             <option value="19:00">19:00</option>
-            <option value="16:00">19:30</option>
+            <option value="19:30">19:30</option>
             <option value="20:00">20:00</option>
-            <option value="16:00">20:30</option>
+            <option value="20:30">20:30</option>
             <option value="21:00">21:00</option>
           </select>
         </div>
@@ -159,16 +184,32 @@ const ReservationForm = () => {
           max="8"
         />
 
-        <button type="submit" id="submit-button">Book Now</button>
-      </form>
-
-      {/* Alert Box */}
-      {showAlert && (
-        <div id="alert-box" className="alert-box">
-          <p>{alertMessage}</p>
-          <button onClick={() => setShowAlert(false)}>Close</button>
+        {/* PDPA Consent */}
+        <div className="form-group checkbox-inline">
+          <input
+            type="checkbox"
+            id="agreeToPDPA"
+            checked={formData.agreeToPDPA}
+            onChange={handleChange}
+            style={{
+              width: "fit-content",
+              paddingBottom: "0px",
+              margin: "0px",
+            }}
+          />
+          <label htmlFor="agreeToPDPA">
+            I agree to the{" "}
+            <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">
+              Privacy Policy
+            </a>{" "}
+            and terms of data usage.
+          </label>
         </div>
-      )}
+
+        <button type="submit" id="submit-button">
+          Book Now
+        </button>
+      </form>
     </div>
   );
 };

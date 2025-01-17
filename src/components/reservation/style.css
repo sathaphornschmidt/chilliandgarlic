@@ -3,8 +3,8 @@
   display: flex;
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
-  height: 100vh; /* Full-screen height */
-  background: url('../img/Ros.jpg') no-repeat center center fixed;
+  height: 120vh; /* Full-screen height */
+  background: url("../img/Ros.jpg") no-repeat center center fixed;
   background-size: cover; /* Cover entire screen */
 }
 
@@ -29,7 +29,6 @@
 #reservation-form label {
   font-weight: bold;
   display: block;
-  margin-bottom: 5px;
 }
 
 /* Form Inputs */
@@ -46,9 +45,33 @@
 /* Focus Styles */
 #reservation-form input:focus,
 #reservation-form select:focus {
-  border-color: #4CAF50; /* Highlight with green */
+  border-color: #4caf50; /* Highlight with green */
   background-color: #fff;
   outline: none;
+}
+
+/* Checkbox and Text Styling */
+.form-group.checkbox-inline {
+  display: flex; /* Align items in the same row */
+  justify-content: "center";
+  align-items: center; /* Align vertically */
+  gap: 0.5rem; /* Add spacing between checkbox and text */
+  margin-bottom: 10px;
+}
+
+.checkbox-inline input[type="checkbox"] {
+  margin: 0; /* Remove unnecessary margins */
+  transform: scale(1.2); /* Adjust size of the checkbox */
+  cursor: pointer; /* Change cursor to pointer */
+}
+
+.checkbox-inline label {
+  display: inline-flex; /* Align in a single line */
+  align-items: center; /* Align text and checkbox vertically */
+  cursor: pointer;
+  font-size: 14px; /* Adjust font size */
+  line-height: 1.5; /* Space between lines */
+  gap: 0.5rem; /* Spacing between checkbox and text */
 }
 
 /* Form Button */
@@ -69,73 +92,13 @@
   background-color: #294ca5; /* Darker shade for hover effect */
 }
 
-/* Form Group */
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  font-size: 16px;
-  color: #333;
-  font-weight: bold;
-  margin-bottom: 5px;
-  display: block;
-}
-
-/* Dropdown */
-.form-input {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  color: #333;
-  transition: all 0.3s ease;
-}
-
-.form-input option {
-  font-size: 16px;
-}
-
-/* Alert Box */
-.alert-box {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(248, 215, 218, 0.9);
-  color: #721c24;
-  padding: 20px;
-  border-radius: 10px;
-  border: 1px solid #f5c6cb;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  z-index: 1000;
-}
-
-/* Alert Button */
-.alert-box button {
-  margin-top: 10px;
-  background-color: #721c24;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.alert-box button:hover {
-  background-color: #a94442;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
   #reservation {
-      padding: 10px;
+    padding: 10px;
   }
 
   #reservation-form {
-      width: 90%;
+    width: 90%;
   }
 }

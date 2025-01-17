@@ -296,7 +296,7 @@ li {
 /* กล่องฟอร์ม */
 #reservation-form {
   background: rgba(255, 255, 255, 0.8); /* สีขาวโปร่งใส */
-  padding: 15px;
+  padding: 1px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   max-width: 400px;
