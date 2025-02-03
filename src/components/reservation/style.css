@@ -83,9 +83,9 @@
   background-color: #4462ac;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s ease-in-out;
 }
 
 #reservation-form button:hover {

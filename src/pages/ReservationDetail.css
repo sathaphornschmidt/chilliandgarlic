@@ -1,0 +1,137 @@
+/* 🎨 ปรับพื้นหลัง และจัดฟอร์มให้ตรงกับ Reservation Form */
+#reservation-detail1 {
+  display: flex;
+  justify-content: center; /* จัดให้อยู่ตรงกลาง */
+  align-items: center;
+  width: 100vw;
+  min-height: 120vh; /* เพิ่มความสูงเพื่อให้สมดุล */
+  background: url("../img/Ros.jpg") no-repeat center center fixed;
+  background-size: cover;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+/* 📦 กล่องฟอร์มสไตล์เดียวกับ Reservation Form */
+#reservation-form1 {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+}
+
+/* 🏷️ หัวข้อ */
+#reservation-form1 h2 {
+  text-align: center;
+  font-size: 30px;
+  padding: 20px;
+}
+
+/* 📋 ป้ายกำกับ */
+#reservation-form1 label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* ✏️ ปรับอินพุตให้เหมือนกับ Reservation Form */
+#reservation-form1 input,
+#reservation-form1 select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+/* 🕒 ปรับ Select ให้เหมือน Input */
+#reservation-form1 select {
+  appearance: none; /* ลบสไตล์ดั้งเดิมของเบราว์เซอร์ */
+  background-color: white;
+  cursor: pointer;
+}
+
+/* ✨ เมื่อโฟกัสที่อินพุต */
+#reservation-form1 input:focus,
+#reservation-form1 select:focus {
+  border-color: #4caf50;
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+/* ✅ ปุ่มบันทึก */
+#update-button {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  margin-bottom: 12px;
+}
+
+#update-button:hover {
+  background-color: #388e3c;
+  transform: scale(1.05);
+}
+
+/* ❌ ปุ่มลบ */
+#delete-button {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+#delete-button:hover {
+  background-color: #d32f2f;
+  transform: scale(1.05);
+}
+
+/* 📱 Responsive Design */
+@media (max-width: 768px) {
+  #reservation-detail1 {
+    padding: 15px;
+  }
+
+  #reservation-form1 {
+    width: 95%;
+    padding: 20px;
+  }
+
+  #update-button,
+  #delete-button {
+    padding: 12px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  #reservation-form1 {
+    padding: 15px;
+  }
+
+  #reservation-form1 h2 {
+    font-size: 24px;
+  }
+
+  #update-button,
+  #delete-button {
+    font-size: 15px;
+    padding: 10px;
+  }
+}
