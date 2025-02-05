@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Navbar from "../components/layout/nav/Navbar";
 import axios from "axios";
 import "./ReservationDetail.css";
 
@@ -9,7 +10,14 @@ const ReservationDetail = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [expired, setExpired] = useState(false);
-  const [availableTableTime, setAvailableTableTime] = useState({});
+  const [availableTableTime, setAvailableTableTime] = useState({
+    "16:00": 0,
+    "17:00": 0,
+    "18:00": 0,
+    "19:00": 0,
+    "20:00": 0,
+    "21:00": 0,
+  });
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -77,7 +85,7 @@ const ReservationDetail = () => {
   }, [id, navigate]);
 
   // ดึงข้อมูลโต๊ะว่างตามวันที่
-  const handleGetAvailabilityTableOnDate = async (date) => {
+  const handleGetAvailabilityTableOnDate = async (date: string) => {
     try {
       const response = await axios.get(
         `http://localhost:5050/table-availability/${date}`
@@ -97,7 +105,7 @@ const ReservationDetail = () => {
   };
 
   // ตรวจสอบวันที่
-  const handleChangeDate = (e) => {
+  const handleChangeDate = (e: any) => {
     const selectedDate = e.target.value;
     if (!selectedDate) return;
 
@@ -118,13 +126,13 @@ const ReservationDetail = () => {
     handleGetAvailabilityTableOnDate(selectedDate);
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     const { id, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [id]: value }));
   };
 
   const handleUpdate = useCallback(
-    async (e) => {
+    async (e: any) => {
       e.preventDefault();
       try {
         console.log("Updating reservation...");
@@ -154,7 +162,7 @@ const ReservationDetail = () => {
         await axios.delete(`http://localhost:5050/reservations/${id}`);
         alert("Your booking has been successfully canceled.");
 
-        window.location.reload();
+        window.location.assign("/");
         return;
       } catch (error) {
         console.error("Error deleting reservation:", error);
@@ -176,70 +184,74 @@ const ReservationDetail = () => {
   }
 
   return (
-    <div id="reservation-detail1">
-      <form id="reservation-form1" onSubmit={handleUpdate}>
-        <h2>RESERVATIONS</h2>
-        <br />
+    <>
+      <Navbar />
+      <div id="reservation-detail1">
+        <form id="reservation-form1" onSubmit={handleUpdate}>
+          <h2>RESERVATIONS</h2>
+          <br />
 
-        {/* ❌ ปิดการแก้ไข name, email, phone */}
-        <label htmlFor="name">Full Name:</label>
-        <input type="text" id="name" value={formData.name} readOnly />
+          {/* ❌ ปิดการแก้ไข name, email, phone */}
+          <label htmlFor="name">Full Name:</label>
+          <input type="text" id="name" value={formData.name} readOnly />
 
-        <label htmlFor="email">Email:</label>
-        <input type="email" id="email" value={formData.email} readOnly />
+          <label htmlFor="email">Email:</label>
+          <input type="email" id="email" value={formData.email} readOnly />
 
-        <label htmlFor="phone">Phone:</label>
-        <input type="text" id="phone" value={formData.phone} readOnly />
+          <label htmlFor="phone">Phone:</label>
+          <input type="text" id="phone" value={formData.phone} readOnly />
 
-        {/* ✅ ป้องกันการเลือกวันอาทิตย์ & จันทร์ + วันที่ผ่านมา */}
-        <label htmlFor="date">Date (Tue-Sat):</label>
-        <input
-          type="date"
-          id="date"
-          value={formData.date}
-          onChange={handleChangeDate}
-          required
-          min={new Date().toISOString().split("T")[0]} // ป้องกันการเลือกวันที่ผ่านมาแล้ว
-        />
+          {/* ✅ ป้องกันการเลือกวันอาทิตย์ & จันทร์ + วันที่ผ่านมา */}
+          <label htmlFor="date">Date (Tue-Sat):</label>
+          <input
+            type="date"
+            id="date"
+            value={formData.date}
+            onChange={handleChangeDate}
+            required
+            min={new Date().toISOString().split("T")[0]} // ป้องกันการเลือกวันที่ผ่านมาแล้ว
+          />
 
-        {/* ✅ ให้เลือกเฉพาะเวลาที่มีโต๊ะว่าง */}
-        <label htmlFor="time">Time (16:00 - 21:00):</label>
-        <select
-          id="time"
-          value={formData.time}
-          onChange={handleChange}
-          required
-        >
-          <option value="">--:--</option>
-          {Object.entries(availableTableTime)?.map(
-            ([time, remaining]) =>
-              remaining > 0 && (
-                <option key={time} value={time}>
-                  {time} ({remaining} table{remaining > 1 ? "s" : ""} available)
-                </option>
-              )
-          )}
-        </select>
+          {/* ✅ ให้เลือกเฉพาะเวลาที่มีโต๊ะว่าง */}
+          <label htmlFor="time">Time (16:00 - 21:00):</label>
+          <select
+            id="time"
+            value={formData.time}
+            onChange={handleChange}
+            required
+          >
+            <option value="">--:--</option>
+            {Object.entries(availableTableTime)?.map(
+              ([time, remaining]) =>
+                remaining > 0 && (
+                  <option key={time} value={time}>
+                    {time} ({remaining} table{remaining > 1 ? "s" : ""}{" "}
+                    available)
+                  </option>
+                )
+            )}
+          </select>
 
-        <label htmlFor="guests">Number of Guests (Max: 8):</label>
-        <input
-          type="number"
-          id="guests"
-          value={formData.guests}
-          onChange={handleChange}
-          min="1"
-          max="8"
-          required
-        />
+          <label htmlFor="guests">Number of Guests (Max: 8):</label>
+          <input
+            type="number"
+            id="guests"
+            value={formData.guests}
+            onChange={handleChange}
+            min="1"
+            max="8"
+            required
+          />
 
-        <button type="submit" id="update-button">
-          Update Reservation
-        </button>
-        <button type="button" id="delete-button" onClick={handleDelete}>
-          Cancel Reservation
-        </button>
-      </form>
-    </div>
+          <button type="submit" id="update-button">
+            Update Reservation
+          </button>
+          <button type="button" id="delete-button" onClick={handleDelete}>
+            Cancel Reservation
+          </button>
+        </form>
+      </div>
+    </>
   );
 };
 

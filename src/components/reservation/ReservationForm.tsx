@@ -22,7 +22,7 @@ const ReservationForm = () => {
     "21:00": 0,
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     const { id, value, type, checked } = e.target;
     setFormData({
       ...formData,
@@ -30,7 +30,7 @@ const ReservationForm = () => {
     });
   };
 
-  const handleChangeDate = (e) => {
+  const handleChangeDate = (e: any) => {
     const { id, value } = e.target;
     if (id === "date") {
       const selectedDate = value;
@@ -49,7 +49,7 @@ const ReservationForm = () => {
     handleGetAvailabilityTableOnDate(value);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     const selectedDate = new Date(formData.date);
@@ -114,7 +114,7 @@ const ReservationForm = () => {
     });
   };
 
-  const handleGetAvailabilityTableOnDate = async (date) => {
+  const handleGetAvailabilityTableOnDate = async (date: string) => {
     try {
       const response = await axios.get(
         `http://localhost:5050/table-availability/${date}`

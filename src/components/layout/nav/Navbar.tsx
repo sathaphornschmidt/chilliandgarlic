@@ -13,7 +13,7 @@ const Navbar = () => {
     <nav>
       {/* Logo */}
       <div className="logo">
-        <a href="#rostock">
+        <a href="/">
           <h2>Chilli'n Garlic</h2>
         </a>
       </div>
@@ -21,19 +21,19 @@ const Navbar = () => {
       {/* Menu Links */}
       <ul className={isMenuOpen ? "open" : ""}>
         <li>
-          <a href="#menu-sections">MENU</a>
+          <a href="/#menu-sections">MENU</a>
         </li>
         <li>
-          <a href="#dessert-sections">DESSERT & BEVERAGES</a>
+          <a href="/#dessert-sections">DESSERT & BEVERAGES</a>
         </li>
         <li>
-          <a href="#offers-sections">OFFERS</a>
+          <a href="/#offers-sections">OFFERS</a>
         </li>
         <li>
-          <a href="#aboutus-sections">ABOUT US</a>
+          <a href="/#aboutus-sections">ABOUT US</a>
         </li>
         <li>
-          <a href="#reservation">RESERVATIONS</a>
+          <a href="/#reservation">RESERVATIONS</a>
         </li>
       </ul>
 

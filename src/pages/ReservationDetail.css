@@ -135,3 +135,15 @@
     padding: 10px;
   }
 }
+
+input[readonly] {
+  background-color: #f0f0f0; /* Light grey background */
+  color: #888; /* Darker grey text */
+  cursor: not-allowed; /* Show a "not allowed" cursor */
+  border: 1px solid #ccc; /* Slightly muted border */
+}
+
+/* calendar icon */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
