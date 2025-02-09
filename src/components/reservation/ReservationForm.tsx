@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import "./style.css"; // Import your CSS file
+import "./style.css";
 import axios from "axios";
 
 const ReservationForm = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    confirmEmail: "",
     phone: "",
     date: "",
     time: "",
     guests: 1,
-    agreeToPDPA: false, // PDPA consent state
+    agreeToPDPA: false,
   });
 
   const [availableTableTime, setAvailableTableTime] = useState({
@@ -26,7 +27,7 @@ const ReservationForm = () => {
     const { id, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [id]: type === "checkbox" ? checked : value, // Handle checkbox for PDPA
+      [id]: type === "checkbox" ? checked : value,
     });
   };
 
@@ -52,36 +53,29 @@ const ReservationForm = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    const selectedDate = new Date(formData.date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    selectedDate.setHours(0, 0, 0, 0);
-
-    const day = selectedDate.getDay();
-
-    // Validation: Check PDPA consent
-    if (!formData.agreeToPDPA) {
-      alert(
-        "You must agree to the Privacy Policy before submitting your reservation."
+    if (formData.guests > 8) {
+      const cateringConfirm = window.confirm(
+        "Sorry, we have a limited number of guests. Are you interested in trying our catering service?"
       );
+      if (cateringConfirm) {
+        window.location.href = "https://rostock.catering/";
+        return;
+      } else {
+        return;
+      }
+    }
+
+    if (formData.email !== formData.confirmEmail) {
+      alert("Email and Confirm Email do not match!");
       return;
     }
 
-    // Validation: Check date
-    if (selectedDate < today) {
-      alert(
-        "You cannot select a past date. Please choose today's date or later."
-      );
-      return;
-    }
-    if (day === 0 || day === 1) {
-      alert(
-        "We are closed on Sundays and Mondays. Please choose another date."
-      );
-      return;
-    }
+    const confirmation = window.confirm(
+      `Please confirm your reservation details:\n\nName: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone}\nDate: ${formData.date}\nTime: ${formData.time}\nGuests: ${formData.guests}`
+    );
 
-    // API Call
+    if (!confirmation) return;
+
     try {
       const response = await axios.post("http://localhost:5050/reservations", {
         reservation: {
@@ -102,15 +96,15 @@ const ReservationForm = () => {
       console.error(error);
     }
 
-    // Reset form
     setFormData({
       name: "",
       email: "",
+      confirmEmail: "",
       phone: "",
       date: "",
       time: "",
       guests: 1,
-      agreeToPDPA: false, // Reset PDPA checkbox
+      agreeToPDPA: false,
     });
   };
 
@@ -119,11 +113,9 @@ const ReservationForm = () => {
       const response = await axios.get(
         `http://localhost:5050/table-availability/${date}`
       );
-      // Ensure the data format matches { "16:00": 2, "17:00": 0, ... }
       setAvailableTableTime(response.data["table-availability"]);
     } catch (error) {
       console.error("Error fetching table availability:", error);
-      // Reset table availability in case of an error
       setAvailableTableTime({
         "16:00": 0,
         "17:00": 0,
@@ -157,6 +149,16 @@ const ReservationForm = () => {
           id="email"
           placeholder="Your Email"
           value={formData.email}
+          onChange={handleChange}
+          required
+        />
+
+        <label htmlFor="confirmEmail">Confirm Email:</label>
+        <input
+          type="email"
+          id="confirmEmail"
+          placeholder="Confirm Your Email"
+          value={formData.confirmEmail}
           onChange={handleChange}
           required
         />
@@ -196,20 +198,19 @@ const ReservationForm = () => {
             className="form-input"
           >
             <option value="">--:--</option>
-            {Object.entries(availableTableTime)?.map(([time, remaining]) => {
-              return (
+            {Object.entries(availableTableTime)?.map(
+              ([time, remaining]) =>
                 remaining > 0 && (
                   <option key={time} value={time}>
                     {time} ({remaining} table{remaining > 1 ? "s" : ""}{" "}
                     available)
                   </option>
                 )
-              );
-            })}
+            )}
           </select>
         </div>
 
-        <label htmlFor="guests">Number of Guests (Max: 8):</label>
+        <label htmlFor="guests">Number of Guests (max.8):</label>
         <input
           type="number"
           id="guests"
@@ -217,10 +218,8 @@ const ReservationForm = () => {
           onChange={handleChange}
           required
           min="1"
-          max="8"
         />
 
-        {/* PDPA Consent */}
         <div className="form-group checkbox-inline">
           <input
             type="checkbox"
@@ -234,10 +233,10 @@ const ReservationForm = () => {
             }}
           />
           <label htmlFor="agreeToPDPA">
-            I agree to the{" "}
+            I agree to the
             <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">
               Privacy Policy
-            </a>{" "}
+            </a>
             and terms of data usage.
           </label>
         </div>

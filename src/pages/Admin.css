@@ -1,0 +1,109 @@
+/* 🌟 พื้นหลังเต็มจอ */
+#admin-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  min-height: 100vh;
+  background: url("../img/Ros.jpg") no-repeat center center fixed;
+  background-size: cover;
+  padding: 20px;
+}
+
+/* 📦 กล่องฟอร์มโปร่งแสง */
+#admin-login-form {
+  background: rgba(255, 255, 255, 0.9); /* ทำให้โปร่งแสงเหมือนฟอร์มจอง */
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 100%;
+  backdrop-filter: blur(10px); /* ทำให้พื้นหลังเบลอ */
+}
+
+/* 🏷️ หัวข้อ */
+#admin-login-form h2 {
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  padding-bottom: 15px;
+  color: #333;
+}
+
+/* 📋 ป้ายกำกับ */
+#admin-login-form label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* ✏️ อินพุต */
+#admin-login-form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+/* ✨ เมื่อโฟกัสที่อินพุต */
+#admin-login-form input:focus {
+  border-color: #4462ac; /* เปลี่ยนเป็นสีฟ้า */
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(68, 98, 172, 0.5);
+}
+
+/* 🔑 ปุ่ม Login */
+#login-button {
+  width: 100%;
+  padding: 14px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #4caf50; /* สีเขียว */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  margin-top: 10px;
+}
+
+#login-button:hover {
+  background-color: #388e3c;
+  transform: scale(1.05);
+}
+
+/* 📱 Responsive Design */
+@media (max-width: 768px) {
+  #admin-login {
+    padding: 15px;
+  }
+
+  #admin-login-form {
+    width: 95%;
+    padding: 20px;
+  }
+
+  #login-button {
+    padding: 12px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  #admin-login-form {
+    padding: 15px;
+  }
+
+  #admin-login-form h2 {
+    font-size: 24px;
+  }
+
+  #login-button {
+    font-size: 15px;
+    padding: 10px;
+  }
+}
