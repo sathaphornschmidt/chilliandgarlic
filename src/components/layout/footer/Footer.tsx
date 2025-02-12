@@ -33,7 +33,7 @@ const Footer = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Chilli’n Garlic-Str. 17 · 18057 Rostock
+              <p>Chilli’n Garlic-Str. 17 · 18057 Rostock</p>
             </a>
           </li>
           <li>
@@ -42,7 +42,7 @@ const Footer = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Fritz-Reuter-Str. 17 · 18057 Rostock
+              <p>Fritz-Reuter-Str. 17 · 18057 Rostock</p>
             </a>
           </li>
         </ul>
@@ -58,7 +58,7 @@ const Footer = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Instagram
+              <p>Instagram</p>
             </a>
           </li>
           <li>
@@ -67,7 +67,7 @@ const Footer = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Facebook
+              <p>Facebook</p>
             </a>
           </li>
           <li>
@@ -76,7 +76,7 @@ const Footer = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Rostock.Catering
+              <p>Rostock.Catering</p>
             </a>
           </li>
           <li>
@@ -85,7 +85,7 @@ const Footer = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Fritzreuterstuben-Rostock
+              <p>Fritzreuterstuben-Rostock</p>
             </a>
           </li>
         </ul>

@@ -1,17 +1,17 @@
-/* 🎨 ปรับพื้นหลัง และจัดฟอร์มให้ตรงกับ Reservation Form */
+/* 🎨 Main container for the reservation form */
 #reservation-detail1 {
   display: flex;
-  justify-content: center; /* จัดให้อยู่ตรงกลาง */
+  justify-content: center;
   align-items: center;
   width: 100vw;
-  min-height: 120vh; /* เพิ่มความสูงเพื่อให้สมดุล */
+  min-height: 120vh;
   background: url("../img/Ros.jpg") no-repeat center center fixed;
   background-size: cover;
   flex-wrap: wrap;
   padding: 20px;
 }
 
-/* 📦 กล่องฟอร์มสไตล์เดียวกับ Reservation Form */
+/* 📦 Form styling */
 #reservation-form1 {
   background: rgba(255, 255, 255, 0.8);
   padding: 20px;
@@ -21,21 +21,21 @@
   width: 100%;
 }
 
-/* 🏷️ หัวข้อ */
+/* 🏷️ Form heading */
 #reservation-form1 h2 {
   text-align: center;
   font-size: 30px;
   padding: 20px;
 }
 
-/* 📋 ป้ายกำกับ */
+/* 📋 Labels */
 #reservation-form1 label {
   font-weight: bold;
   display: block;
   margin-bottom: 5px;
 }
 
-/* ✏️ ปรับอินพุตให้เหมือนกับ Reservation Form */
+/* ✏️ Input and select fields */
 #reservation-form1 input,
 #reservation-form1 select {
   width: 100%;
@@ -47,14 +47,14 @@
   font-size: 16px;
 }
 
-/* 🕒 ปรับ Select ให้เหมือน Input */
+/* 🕒 Custom select styling */
 #reservation-form1 select {
-  appearance: none; /* ลบสไตล์ดั้งเดิมของเบราว์เซอร์ */
+  appearance: none;
   background-color: white;
   cursor: pointer;
 }
 
-/* ✨ เมื่อโฟกัสที่อินพุต */
+/* ✨ Focus state for inputs and selects */
 #reservation-form1 input:focus,
 #reservation-form1 select:focus {
   border-color: #4caf50;
@@ -63,7 +63,7 @@
   box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
 }
 
-/* ✅ ปุ่มบันทึก */
+/* ✅ Update button */
 #update-button {
   width: 100%;
   padding: 10px;
@@ -83,7 +83,13 @@
   transform: scale(1.05);
 }
 
-/* ❌ ปุ่มลบ */
+#update-button:disabled {
+  background-color: #a5d6a7; /* Lighter green for disabled state */
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* ❌ Delete button */
 #delete-button {
   width: 100%;
   padding: 10px;
@@ -100,6 +106,12 @@
 #delete-button:hover {
   background-color: #d32f2f;
   transform: scale(1.05);
+}
+
+#delete-button:disabled {
+  background-color: #ff8a80; /* Lighter red for disabled state */
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 /* 📱 Responsive Design */
@@ -136,14 +148,22 @@
   }
 }
 
+/* Read-only input styling */
 input[readonly] {
-  background-color: #f0f0f0; /* Light grey background */
-  color: #888; /* Darker grey text */
-  cursor: not-allowed; /* Show a "not allowed" cursor */
-  border: 1px solid #ccc; /* Slightly muted border */
+  background-color: #f0f0f0;
+  color: #888;
+  cursor: not-allowed;
+  border: 1px solid #ccc;
 }
 
-/* calendar icon */
+select:disabled {
+  background-color: #f0f0f0;
+  color: #888;
+  cursor: not-allowed;
+  border: 1px solid #ccc;
+}
+
+/* Calendar icon styling */
 input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }

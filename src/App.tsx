@@ -5,10 +5,10 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import Home from "./pages/Home";
-import ReservationDetailPage from "./pages/ReservationDetail";
-import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
+import Home from "./pages/home";
+import ReservationDetailPage from "./pages/reservation-details";
+import AdminLogin from "./pages/admin-login";
+import AdminDashboard from "./pages/admin-dashboard";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import "./App.css";
 

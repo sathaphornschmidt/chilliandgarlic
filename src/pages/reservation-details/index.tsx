@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Navbar from "../components/layout/nav/Navbar";
+import Navbar from "../../components/layout/nav/Navbar";
 import axios from "axios";
-import "./ReservationDetail.css";
+import "./style.css"; // Ensure the CSS file is imported
+import { formatDateTime } from "../../utils/formatTime";
+import {
+  IReservation,
+  ReservationStatus,
+} from "../../abstractions/IReservation";
 
 const ReservationDetail = () => {
   const { id } = useParams();
@@ -27,6 +32,7 @@ const ReservationDetail = () => {
     guests: 1,
   });
   const [originalData, setOriginalData] = useState(null);
+  const [currentReservation, setCurrentReservation] = useState<IReservation>();
 
   useEffect(() => {
     const fetchReservation = async () => {
@@ -39,13 +45,7 @@ const ReservationDetail = () => {
           const reservation = response.data.reservation;
           setOriginalData(reservation);
 
-          const reservationDateUTC = new Date(reservation.date);
-          const reservationDateLocal = new Date(
-            reservationDateUTC.getTime() + 7 * 60 * 60 * 1000
-          );
-          const formattedDate = reservationDateLocal
-            .toISOString()
-            .split("T")[0];
+          const formattedDate = formatDateTime(reservation.date);
 
           setFormData({
             name: reservation.name,
@@ -55,6 +55,8 @@ const ReservationDetail = () => {
             time: reservation.time,
             guests: reservation.number_of_guests,
           });
+
+          setCurrentReservation(reservation);
 
           handleGetAvailabilityTableOnDate(formattedDate);
           setLoading(false);
@@ -128,7 +130,10 @@ const ReservationDetail = () => {
     [id, formData, hasChanges]
   );
 
-  const handleDelete = useCallback(async () => {
+  const isReservationCanceled = (): boolean =>
+    currentReservation?.status === ReservationStatus.CANCELLED;
+
+  const handleCancel = useCallback(async () => {
     const confirmation = window.confirm(
       `Are you sure you want to cancel this booking?\n\nName: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone}\nDate: ${formData.date}\nTime: ${formData.time}\nGuests: ${formData.guests}`
     );
@@ -136,7 +141,11 @@ const ReservationDetail = () => {
     if (!confirmation) return;
 
     try {
-      await axios.delete(`http://localhost:5050/reservations/${id}`);
+      await axios.put(
+        `http://localhost:5050/reservations/${id}/cancel`,
+        undefined,
+        { withCredentials: true }
+      );
       alert("Your booking has been successfully canceled.");
       window.location.assign("/");
     } catch (error) {
@@ -160,18 +169,38 @@ const ReservationDetail = () => {
           <h2>RESERVATIONS</h2>
 
           <label htmlFor="name">Full Name:</label>
-          <input type="text" id="name" value={formData.name} readOnly />
+          <input
+            type="text"
+            id="name"
+            value={formData.name}
+            readOnly
+            className="readonly-input"
+          />
 
           <label htmlFor="email">Email:</label>
-          <input type="email" id="email" value={formData.email} readOnly />
+          <input
+            type="email"
+            id="email"
+            value={formData.email}
+            readOnly
+            className="readonly-input"
+          />
 
           <label htmlFor="phone">Phone:</label>
-          <input type="text" id="phone" value={formData.phone} readOnly />
+          <input
+            type="text"
+            id="phone"
+            disabled={isReservationCanceled()}
+            value={formData.phone}
+            readOnly
+            className="readonly-input"
+          />
 
           <label htmlFor="date">Date (Tue-Sat):</label>
           <input
             type="date"
             id="date"
+            readOnly={isReservationCanceled()}
             value={formData.date}
             onChange={handleChange}
             required
@@ -180,6 +209,7 @@ const ReservationDetail = () => {
           <label htmlFor="time">Time (16:00 - 21:00):</label>
           <select
             id="time"
+            disabled={isReservationCanceled()}
             value={formData.time}
             onChange={handleChange}
             required
@@ -196,6 +226,7 @@ const ReservationDetail = () => {
 
           <label htmlFor="guests">Number of Guests (Max: 8):</label>
           <input
+            readOnly={isReservationCanceled()}
             type="number"
             id="guests"
             value={formData.guests}
@@ -205,10 +236,19 @@ const ReservationDetail = () => {
             required
           />
 
-          <button type="submit" id="update-button" disabled={!hasChanges}>
+          <button
+            type="submit"
+            id="update-button"
+            disabled={!hasChanges || isReservationCanceled()}
+          >
             Update Reservation
           </button>
-          <button type="button" id="delete-button" onClick={handleDelete}>
+          <button
+            type="button"
+            disabled={isReservationCanceled()}
+            id="delete-button"
+            onClick={handleCancel}
+          >
             Cancel Reservation
           </button>
         </form>

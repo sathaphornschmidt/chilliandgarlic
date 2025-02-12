@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Admin.css"; // นำเข้าไฟล์ CSS ที่อัปเดต
+import "./style.css"; // นำเข้าไฟล์ CSS ที่อัปเดต
 import axios from "axios";
 
 // Props สำหรับการจัดการ Auth

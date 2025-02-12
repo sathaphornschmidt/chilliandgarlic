@@ -233,11 +233,11 @@ const ReservationForm = () => {
             }}
           />
           <label htmlFor="agreeToPDPA">
-            I agree to the
+            I agree to the &nbsp;
             <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">
               Privacy Policy
             </a>
-            and terms of data usage.
+            &nbsp; and terms of data usage.
           </label>
         </div>
 

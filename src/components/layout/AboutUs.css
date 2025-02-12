@@ -1,0 +1,6 @@
+p {
+  text-align: justify; /* Distribute text evenly */
+  text-indent: 10px; /* Indent the first line */
+  margin: 0; /* Optional: Remove any margins */
+  padding: 0; /* Optional: Remove any padding */
+}

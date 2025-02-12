@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./AdminDashboard.css";
+import "./style.css";
+import { formatDateTime } from "../../utils/formatTime";
 
 interface Reservation {
   id: string;
@@ -26,48 +27,23 @@ const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const response = await axios.get("http://localhost:5050/reservations", {
-          withCredentials: true,
-        });
-        setReservations(response.data.reservations || response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching reservations:", error);
-        setLoading(false);
-      }
-    };
-
     fetchReservations();
   }, []);
 
-  const handleDelete = async (id: string) => {
-    const reservation = reservations.find((res) => res.id === id);
-    if (reservation) {
-      const confirmDelete = window.confirm(
-        `Are you sure you want to delete this reservation?\n\nName: ${
-          reservation.name
-        }\nEmail: ${reservation.email}\nPhone: ${
-          reservation.phone
-        }\nDate: ${formatDate(reservation.date)}\nTime: ${
-          reservation.time
-        }\nGuests: ${reservation.number_of_guests}`
-      );
-      if (confirmDelete) {
-        try {
-          await axios.delete(`http://localhost:5050/reservations/${id}`);
-          setReservations((prev) => prev.filter((res) => res.id !== id));
-          alert("Reservation deleted successfully.");
-        } catch (error) {
-          console.error("Error deleting reservation:", error);
-          alert("Unable to delete the reservation.");
-        }
-      }
+  const fetchReservations = async () => {
+    try {
+      const response = await axios.get("http://localhost:5050/reservations", {
+        withCredentials: true,
+      });
+      setReservations(response.data.reservations || response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching reservations:", error);
+      setLoading(false);
     }
   };
 
-  const handleCancel = (id: string) => {
+  const handleCancel = async (id: string) => {
     const reservation = reservations.find((res) => res.id === id);
     if (reservation) {
       const confirmCancel = window.confirm(
@@ -75,17 +51,22 @@ const AdminDashboard: React.FC = () => {
           reservation.name
         }\nEmail: ${reservation.email}\nPhone: ${
           reservation.phone
-        }\nDate: ${formatDate(reservation.date)}\nTime: ${
+        }\nDate: ${formatDateTime(reservation.date)}\nTime: ${
           reservation.time
         }\nGuests: ${reservation.number_of_guests}`
       );
       if (confirmCancel) {
-        setReservations((prev) =>
-          prev.map((res) =>
-            res.id === id ? { ...res, status: "Cancelled" } : res
-          )
-        );
-        alert("Reservation cancelled successfully.");
+        try {
+          await axios.put(
+            `http://localhost:5050/reservations/${id}/cancel`,
+            undefined,
+            { withCredentials: true }
+          );
+          await fetchReservations();
+        } catch (error) {
+          console.error("Error canceling reservation:", error);
+          alert("Unable to cancel the reservation.");
+        }
       }
     }
   };
@@ -110,10 +91,6 @@ const AdminDashboard: React.FC = () => {
     setIsSortedByDate((prev) => !prev);
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toISOString().split("T")[0];
-  };
-
   const isPastReservation = (date: string, time: string) => {
     const reservationDateTime = new Date(`${date}T${time}`);
     return reservationDateTime < new Date();
@@ -123,7 +100,7 @@ const AdminDashboard: React.FC = () => {
     .filter(
       (res) =>
         res.name.toLowerCase().includes(searchName.toLowerCase()) &&
-        formatDate(res.date).includes(searchDate)
+        formatDateTime(res.date).includes(searchDate)
     )
     .sort((a, b) => {
       if (isSortedByDate) {
@@ -210,7 +187,7 @@ const AdminDashboard: React.FC = () => {
                     <td>{res.name}</td>
                     <td>{res.email}</td>
                     <td>{res.phone}</td>
-                    <td>{formatDate(res.date)}</td>
+                    <td>{formatDateTime(res.date)}</td>
                     <td>{res.time}</td>
                     <td>{res.number_of_guests}</td>
                     <td>{confirmed ? "Confirmed" : res.status || "Active"}</td>
@@ -231,12 +208,6 @@ const AdminDashboard: React.FC = () => {
                           Cancel
                         </button>
                       )}
-                      <button
-                        className="delete-button"
-                        onClick={() => handleDelete(res.id)}
-                      >
-                        Delete
-                      </button>
                     </td>
                   </tr>
                 );

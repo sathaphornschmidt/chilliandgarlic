@@ -50,7 +50,7 @@
 
 /* ✨ เมื่อโฟกัสที่อินพุต */
 #admin-login-form input:focus {
-  border-color: #4462ac; /* เปลี่ยนเป็นสีฟ้า */
+  border-color: #083d77; /* เปลี่ยนเป็นสีฟ้า */
   background-color: #fff;
   outline: none;
   box-shadow: 0 0 5px rgba(68, 98, 172, 0.5);

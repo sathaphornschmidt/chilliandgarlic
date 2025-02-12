@@ -1,10 +1,10 @@
 import React from "react";
-import "../App.css";
-import Footer from "../components/layout/footer/Footer";
-import Navbar from "../components/layout/nav/Navbar";
-import AboutUs from "../components/layout/AboutUs";
-import ReservationForm from "../components/reservation/ReservationForm";
-import RestaurantDetail from "../components/restaurant/RestaurantDetail";
+import Navbar from "../../components/layout/nav/Navbar";
+import RestaurantDetail from "../../components/restaurant/RestaurantDetail";
+import ReservationForm from "../../components/reservation/ReservationForm";
+import Footer from "../../components/layout/footer/Footer";
+import AboutUs from "../../components/layout/AboutUs";
+import "../../App.css";
 
 const Home = () => {
   return (
