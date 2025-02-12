@@ -13,6 +13,8 @@ interface Reservation {
   date: string;
   time: string;
   number_of_guests: number;
+  created_at: Date;
+  updated_at: Date;
   canceled_at: Date;
   canceled_by: string;
   status: string;
@@ -38,6 +40,15 @@ const AdminDashboard: React.FC = () => {
       const response = await axios.get("http://localhost:5050/reservations", {
         withCredentials: true,
       });
+      // Sort the reservations by `created_at` in descending order
+      const sortedReservations = response.data.reservations || response.data;
+      sortedReservations.sort((a: Reservation, b: Reservation) => {
+        return (
+          new Date(b.canceled_at).getTime() - new Date(a.created_at).getTime()
+        );
+      });
+
+      setReservations(sortedReservations);
       setReservations(response.data.reservations || response.data);
       setLoading(false);
     } catch (error) {
@@ -199,10 +210,16 @@ const AdminDashboard: React.FC = () => {
                           ? `This order was canceled by ${
                               res.canceled_by
                             } at ${formatDateTime(res.canceled_at)}`
-                          : "test hello tooltip"
+                          : ""
                       }
                     >
-                      {confirmed ? "Confirmed" : res.status || "Active"}
+                      {res.status === "canceled"
+                        ? `Canceled by ${res.canceled_by}`
+                        : res.status === "booked"
+                        ? "Booked"
+                        : confirmed
+                        ? "Confirmed"
+                        : res.status || "Active"}
                     </td>
                     <td className="action-buttons">
                       {!confirmed && (
