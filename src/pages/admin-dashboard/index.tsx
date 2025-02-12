@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./style.css";
 import { formatDateTime } from "../../utils/formatTime";
+import { ReservationStatus } from "../../abstractions/IReservation";
 
 interface Reservation {
   id: string;
@@ -12,6 +13,8 @@ interface Reservation {
   date: string;
   time: string;
   number_of_guests: number;
+  canceled_at: Date;
+  canceled_by: string;
   status: string;
 }
 
@@ -190,7 +193,17 @@ const AdminDashboard: React.FC = () => {
                     <td>{formatDateTime(res.date)}</td>
                     <td>{res.time}</td>
                     <td>{res.number_of_guests}</td>
-                    <td>{confirmed ? "Confirmed" : res.status || "Active"}</td>
+                    <td
+                      title={
+                        res.status === ReservationStatus.CANCELLED
+                          ? `This order was canceled by ${
+                              res.canceled_by
+                            } at ${formatDateTime(res.canceled_at)}`
+                          : "test hello tooltip"
+                      }
+                    >
+                      {confirmed ? "Confirmed" : res.status || "Active"}
+                    </td>
                     <td className="action-buttons">
                       {!confirmed && (
                         <button

@@ -10,7 +10,28 @@
   padding: 20px;
   box-sizing: border-box;
 }
+td[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.9); /* Soft white background */
+  color: #333; /* Dark text for better readability */
+  padding: 8px 12px; /* Add some space for elegance */
+  border-radius: 8px; /* Round corners for a smoother look */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  font-size: 14px; /* Adjust font size for clarity */
+  z-index: 9999;
+  white-space: normal; /* Allow text wrapping */
+  max-width: 200px; /* Ensure the tooltip doesn't get too wide */
+}
 
+td[title]:hover {
+  white-space: normal;
+}
+
+td[title]:hover::after {
+  content: attr(title);
+  display: block;
+}
 /* ✅ Dashboard Container */
 #admin-dashboard #dashboard-container {
   background: rgba(255, 255, 255, 0.95);
