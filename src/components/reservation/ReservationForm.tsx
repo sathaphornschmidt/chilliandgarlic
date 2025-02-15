@@ -55,7 +55,7 @@ const ReservationForm = () => {
 
     if (formData.guests > 8) {
       const cateringConfirm = window.confirm(
-        "Sorry, we have a limited number of guests. Are you interested in trying our catering service?"
+        "Sorry, we have a limited number of guests. Are you interesting in trying our catering service?"
       );
       if (cateringConfirm) {
         window.location.href = "https://rostock.catering/";

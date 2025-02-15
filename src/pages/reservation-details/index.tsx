@@ -126,7 +126,24 @@ const ReservationDetail = () => {
   const handleUpdate = useCallback(
     async (e: any) => {
       e.preventDefault();
+      const isAdmin = !!localStorage.getItem("isAuthenticated");
+
       if (!hasChanges) return;
+
+      console.log(isAdmin);
+      console.log(formData.guests);
+      if (!isAdmin && formData.guests > 8) {
+        console.log("heyy gg");
+        const cateringConfirm = window.confirm(
+          "Sorry, we have a limited number of guests. Are you interesting in trying our catering service?"
+        );
+        if (cateringConfirm) {
+          window.location.href = "https://rostock.catering/";
+          return;
+        } else {
+          return;
+        }
+      }
 
       const confirmation = window.confirm(
         `Please confirm the updated reservation details:\n\nName: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone}\nDate: ${formData.date}\nTime: ${formData.time}\nGuests: ${formData.guests}`
@@ -273,7 +290,6 @@ const ReservationDetail = () => {
             value={formData.guests}
             onChange={handleChange}
             min="1"
-            max="8"
             required
           />
 

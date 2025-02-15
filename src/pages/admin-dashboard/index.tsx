@@ -150,6 +150,7 @@ const AdminDashboard: React.FC = () => {
       await axios.post("http://localhost:5050/auth/logout", undefined, {
         withCredentials: true,
       });
+      localStorage.clear();
     } catch (error) {
       console.error("Logout error:", error);
     }
