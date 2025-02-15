@@ -227,22 +227,7 @@ const ReservationDetail = () => {
             id="date"
             readOnly={isReservationCanceled()}
             value={formData.date}
-<<<<<<< HEAD
-            onChange={(e) => {
-              const selectedDate = e.target.value;
-              const day = new Date(selectedDate).getDay(); // Sunday = 0, Monday = 1, ... Saturday = 6
-              if (day === 0 || day === 1) {
-                alert(
-                  "Sorry, the restaurant is closed on Sundays and Mondays."
-                );
-                return;
-              }
-              handleChange(e);
-              handleGetAvailabilityTableOnDate(selectedDate);
-            }}
-=======
             onChange={handleChangeDate}
->>>>>>> d8812eed7d27dd36eea5403b228c7e3d1e40e621
             required
             min={todayString} // ไม่ให้เลือกวันที่ที่ผ่านมาแล้ว
           />
