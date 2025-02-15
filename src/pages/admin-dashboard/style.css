@@ -268,7 +268,15 @@ td[title]:hover::after {
     height: auto;
   }
 }
+
+/* สำหรับแถวที่ Cancelled (แสดงเป็นสีแดง) */
 .disabled-row {
   opacity: 0.6;
   color: red;
+}
+
+/* สำหรับแถวที่ Expired (แสดงเป็นสีดำ) */
+.expired-row {
+  opacity: 0.6;
+  color: black;
 }

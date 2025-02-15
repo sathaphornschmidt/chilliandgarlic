@@ -29,7 +29,6 @@ const AdminDashboard: React.FC = () => {
   const [isSortedByDate, setIsSortedByDate] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [rowsPerPage] = useState<number>(5);
-  const now = new Date();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -104,17 +103,16 @@ const AdminDashboard: React.FC = () => {
     setIsSortedByDate((prev) => !prev);
   };
 
-  // ฟังก์ชันตรวจสอบว่าเวลาการจองผ่านไปแล้วหรือไม่ (Expired)
+  // ถ้า time อยู่ในรูปแบบ "HH:mm" ให้เติม ":00" เพื่อให้เป็น "HH:mm:ss"
   const formatTime = (time: string) => {
-    // If time is in "HH:mm" format, append ":00"
     return time.split(":").length === 2 ? `${time}:00` : time;
   };
 
+  // ฟังก์ชันตรวจสอบว่าเวลาการจองผ่านไปแล้วหรือไม่ (Expired)
   const isPastReservation = (date: string, time: string) => {
     const reservationTime = formatTime(time);
     const reservationDate = date.split("T")[0];
     const reservationDateTimeString = `${reservationDate}T${reservationTime}`;
-
     const reservationDateTime = new Date(reservationDateTimeString);
     const now = new Date();
     return reservationDateTime < now;
@@ -152,7 +150,9 @@ const AdminDashboard: React.FC = () => {
       await axios.post("http://localhost:5050/auth/logout", undefined, {
         withCredentials: true,
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
     navigate("/login");
   };
 
@@ -207,20 +207,25 @@ const AdminDashboard: React.FC = () => {
               currentReservations.map((res) => {
                 // ตรวจสอบว่าการจองหมดอายุ (Expired) หรือไม่
                 const isExpired = isPastReservation(res.date, res.time);
-                // ใช้ optional chaining เพื่อแปลงค่า canceled_by เป็นตัวพิมพ์เล็ก ถ้าเป็น null จะได้เป็น ""
+                // แปลงค่า canceled_by เป็นตัวพิมพ์เล็ก ถ้าเป็น null จะได้ ""
                 const canceledByLower = res.canceled_by?.toLowerCase() || "";
+                // ตรวจสอบว่าการจองถูก Cancel และถูกยกเลิกโดย customer หรือ satha
                 const isCanceledNonEditable =
                   res.status === "canceled" &&
                   (canceledByLower === "customer" ||
                     canceledByLower === "satha");
 
+                // กำหนดคลาสให้กับแถว:
+                // ถ้า Cancelled ให้ใช้ "disabled-row" (สีแดง)
+                // ถ้า Expired (แต่ไม่ Cancelled) ให้ใช้ "expired-row" (สีดำ)
+                const rowClass = isCanceledNonEditable
+                  ? "disabled-row"
+                  : isExpired
+                  ? "expired-row"
+                  : "";
+
                 return (
-                  <tr
-                    key={res.id}
-                    className={
-                      isExpired || isCanceledNonEditable ? "disabled-row" : ""
-                    }
-                  >
+                  <tr key={res.id} className={rowClass}>
                     <td>{res.name}</td>
                     <td>{res.email}</td>
                     <td>{res.phone}</td>
@@ -236,9 +241,9 @@ const AdminDashboard: React.FC = () => {
                           : ""
                       }
                     >
-                      {res.status === "canceled"
+                      {isCanceledNonEditable
                         ? `Canceled by ${res.canceled_by}`
-                        : isPastReservation(res.date, res.time)
+                        : isExpired
                         ? "Expired"
                         : res.status === "booked"
                         ? "Booked"
