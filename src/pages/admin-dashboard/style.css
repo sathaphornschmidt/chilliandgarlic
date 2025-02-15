@@ -41,7 +41,7 @@ td[title]:hover::after {
   width: 90%;
   max-width: 1200px;
   height: 90vh;
-  overflow-y: auto;
+  overflow-y: hidden;
   text-align: center;
   backdrop-filter: blur(8px);
   transition: transform 0.3s ease-in-out;
@@ -267,4 +267,8 @@ td[title]:hover::after {
     width: 100%;
     height: auto;
   }
+}
+.disabled-row {
+  opacity: 0.6;
+  color: red;
 }

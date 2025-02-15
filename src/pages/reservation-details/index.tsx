@@ -31,7 +31,7 @@ const ReservationDetail = () => {
     time: "",
     guests: 1,
   });
-  const [originalData, setOriginalData] = useState(null);
+  const [originalData, setOriginalData] = useState<any>(null);
   const [currentReservation, setCurrentReservation] = useState<IReservation>();
 
   useEffect(() => {
@@ -45,7 +45,10 @@ const ReservationDetail = () => {
           const reservation = response.data.reservation;
           setOriginalData(reservation);
 
-          const formattedDate = formatDateTime(reservation.date);
+          // แปลงวันที่ให้อยู่ในรูปแบบ "YYYY-MM-DD" โดยใช้ toLocaleDateString('en-CA')
+          const formattedDate = new Date(reservation.date).toLocaleDateString(
+            "en-CA"
+          );
 
           setFormData({
             name: reservation.name,
@@ -161,6 +164,9 @@ const ReservationDetail = () => {
   if (expired)
     return <div className="expired">⏳ This reservation has expired.</div>;
 
+  // คำนวณวันที่ปัจจุบันในรูปแบบ "YYYY-MM-DD" โดยใช้ toLocaleDateString('en-CA')
+  const todayString = new Date().toLocaleDateString("en-CA");
+
   return (
     <>
       <Navbar />
@@ -204,6 +210,7 @@ const ReservationDetail = () => {
             value={formData.date}
             onChange={handleChange}
             required
+            min={todayString} // ไม่ให้เลือกวันที่ที่ผ่านมาแล้ว
           />
 
           <label htmlFor="time">Time (16:00 - 21:00):</label>
@@ -215,13 +222,30 @@ const ReservationDetail = () => {
             required
           >
             <option value="">--:--</option>
-            {Object.entries(availableTableTime)?.map(([time, remaining]) =>
-              remaining > 0 ? (
-                <option key={time} value={time}>
-                  {time} ({remaining} table{remaining > 1 ? "s" : ""} available)
-                </option>
-              ) : null
-            )}
+            {Object.entries(availableTableTime)?.map(([time, remaining]) => {
+              if (remaining > 0) {
+                let isDisabled = false;
+                // ตรวจสอบเฉพาะเมื่อวันที่ที่เลือกเป็นวันนี้
+                if (formData.date === todayString) {
+                  // สร้าง Date object สำหรับเวลาที่เลือก (โดยใช้วันที่ที่เลือก)
+                  const optionDateTime = new Date(`${formData.date}T${time}`);
+                  // คำนวณเวลาปัจจุบันบวก 4 ชั่วโมง
+                  const fourHoursLater = new Date(
+                    Date.now() + 4 * 60 * 60 * 1000
+                  );
+                  if (optionDateTime < fourHoursLater) {
+                    isDisabled = true;
+                  }
+                }
+                return (
+                  <option key={time} value={time} disabled={isDisabled}>
+                    {time} ({remaining} table{remaining > 1 ? "s" : ""}{" "}
+                    available)
+                  </option>
+                );
+              }
+              return null;
+            })}
           </select>
 
           <label htmlFor="guests">Number of Guests (Max: 8):</label>

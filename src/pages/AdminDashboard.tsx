@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./style.css";
-import { formatDateTime } from "../../utils/formatTime";
-import { ReservationStatus } from "../../abstractions/IReservation";
+import "./AdminDashboard.css";
 
 interface Reservation {
   id: string;
@@ -13,10 +11,6 @@ interface Reservation {
   date: string;
   time: string;
   number_of_guests: number;
-  created_at: Date;
-  updated_at: Date;
-  canceled_at: Date;
-  canceled_by: string;
   status: string;
 }
 
@@ -32,30 +26,48 @@ const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchReservations = async () => {
+      try {
+        const response = await axios.get("http://localhost:5050/reservations", {
+          withCredentials: true,
+        });
+        setReservations(response.data.reservations || response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching reservations:", error);
+        setLoading(false);
+      }
+    };
+
     fetchReservations();
   }, []);
 
-  const fetchReservations = async () => {
-    try {
-      const response = await axios.get("http://localhost:5050/reservations", {
-        withCredentials: true,
-      });
-      // Sorting reservations ตาม created_at หรือ canceled_at ตามที่ต้องการ
-      const sortedReservations = response.data.reservations || response.data;
-      sortedReservations.sort((a: Reservation, b: Reservation) => {
-        return (
-          new Date(b.canceled_at).getTime() - new Date(a.created_at).getTime()
-        );
-      });
-      setReservations(sortedReservations);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching reservations:", error);
-      setLoading(false);
+  const handleDelete = async (id: string) => {
+    const reservation = reservations.find((res) => res.id === id);
+    if (reservation) {
+      const confirmDelete = window.confirm(
+        `Are you sure you want to delete this reservation?\n\nName: ${
+          reservation.name
+        }\nEmail: ${reservation.email}\nPhone: ${
+          reservation.phone
+        }\nDate: ${formatDate(reservation.date)}\nTime: ${
+          reservation.time
+        }\nGuests: ${reservation.number_of_guests}`
+      );
+      if (confirmDelete) {
+        try {
+          await axios.delete(`http://localhost:5050/reservations/${id}`);
+          setReservations((prev) => prev.filter((res) => res.id !== id));
+          alert("Reservation deleted successfully.");
+        } catch (error) {
+          console.error("Error deleting reservation:", error);
+          alert("Unable to delete the reservation.");
+        }
+      }
     }
   };
 
-  const handleCancel = async (id: string) => {
+  const handleCancel = (id: string) => {
     const reservation = reservations.find((res) => res.id === id);
     if (reservation) {
       const confirmCancel = window.confirm(
@@ -63,22 +75,17 @@ const AdminDashboard: React.FC = () => {
           reservation.name
         }\nEmail: ${reservation.email}\nPhone: ${
           reservation.phone
-        }\nDate: ${formatDateTime(reservation.date)}\nTime: ${
+        }\nDate: ${formatDate(reservation.date)}\nTime: ${
           reservation.time
         }\nGuests: ${reservation.number_of_guests}`
       );
       if (confirmCancel) {
-        try {
-          await axios.put(
-            `http://localhost:5050/reservations/${id}/cancel`,
-            undefined,
-            { withCredentials: true }
-          );
-          await fetchReservations();
-        } catch (error) {
-          console.error("Error canceling reservation:", error);
-          alert("Unable to cancel the reservation.");
-        }
+        setReservations((prev) =>
+          prev.map((res) =>
+            res.id === id ? { ...res, status: "Cancelled" } : res
+          )
+        );
+        alert("Reservation cancelled successfully.");
       }
     }
   };
@@ -103,16 +110,12 @@ const AdminDashboard: React.FC = () => {
     setIsSortedByDate((prev) => !prev);
   };
 
-  // ฟังก์ชันตรวจสอบว่าเวลาการจองผ่านไปแล้วหรือไม่ (Expired)
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toISOString().split("T")[0];
+  };
+
   const isPastReservation = (date: string, time: string) => {
     const reservationDateTime = new Date(`${date}T${time}`);
-    // Debug: log ค่า reservationDateTime และ current time
-    console.log(
-      "Reservation DateTime:",
-      reservationDateTime,
-      "Current Time:",
-      new Date()
-    );
     return reservationDateTime < new Date();
   };
 
@@ -120,7 +123,7 @@ const AdminDashboard: React.FC = () => {
     .filter(
       (res) =>
         res.name.toLowerCase().includes(searchName.toLowerCase()) &&
-        formatDateTime(res.date).includes(searchDate)
+        formatDate(res.date).includes(searchDate)
     )
     .sort((a, b) => {
       if (isSortedByDate) {
@@ -201,59 +204,38 @@ const AdminDashboard: React.FC = () => {
           <tbody>
             {currentReservations.length > 0 ? (
               currentReservations.map((res) => {
-                // ตรวจสอบว่าการจองหมดอายุ (Expired) หรือไม่
-                const isExpired = isPastReservation(res.date, res.time);
-                // ใช้ optional chaining เพื่อแปลงค่า canceled_by เป็นตัวพิมพ์เล็ก ถ้าเป็น null จะได้เป็น ""
-                const canceledByLower = res.canceled_by?.toLowerCase() || "";
-                const isCanceledNonEditable =
-                  res.status === "canceled" &&
-                  (canceledByLower === "customer" ||
-                    canceledByLower === "satha");
-
+                const confirmed = isPastReservation(res.date, res.time);
                 return (
-                  <tr
-                    key={res.id}
-                    className={
-                      isExpired || isCanceledNonEditable ? "disabled-row" : ""
-                    }
-                  >
+                  <tr key={res.id}>
                     <td>{res.name}</td>
                     <td>{res.email}</td>
                     <td>{res.phone}</td>
-                    <td>{formatDateTime(res.date)}</td>
+                    <td>{formatDate(res.date)}</td>
                     <td>{res.time}</td>
                     <td>{res.number_of_guests}</td>
-                    <td
-                      title={
-                        isCanceledNonEditable
-                          ? `This order was canceled by ${
-                              res.canceled_by
-                            } at ${formatDateTime(res.canceled_at)}`
-                          : ""
-                      }
-                    >
-                      {res.status === "canceled"
-                        ? `Canceled by ${res.canceled_by}`
-                        : isExpired
-                        ? "Expired"
-                        : res.status === "booked"
-                        ? "Booked"
-                        : res.status || "Active"}
-                    </td>
+                    <td>{confirmed ? "Confirmed" : res.status || "Active"}</td>
                     <td className="action-buttons">
+                      {!confirmed && (
+                        <button
+                          className="edit-button"
+                          onClick={() => handleEdit(res.id)}
+                        >
+                          Edit
+                        </button>
+                      )}
+                      {!confirmed && (
+                        <button
+                          className="cancel-button"
+                          onClick={() => handleCancel(res.id)}
+                        >
+                          Cancel
+                        </button>
+                      )}
                       <button
-                        className="edit-button"
-                        onClick={() => handleEdit(res.id)}
-                        disabled={isExpired || isCanceledNonEditable}
+                        className="delete-button"
+                        onClick={() => handleDelete(res.id)}
                       >
-                        Edit
-                      </button>
-                      <button
-                        className="cancel-button"
-                        onClick={() => handleCancel(res.id)}
-                        disabled={isExpired || isCanceledNonEditable}
-                      >
-                        Cancel
+                        Delete
                       </button>
                     </td>
                   </tr>

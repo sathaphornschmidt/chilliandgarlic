@@ -198,15 +198,32 @@ const ReservationForm = () => {
             className="form-input"
           >
             <option value="">--:--</option>
-            {Object.entries(availableTableTime)?.map(
-              ([time, remaining]) =>
-                remaining > 0 && (
-                  <option key={time} value={time}>
+            {Object.entries(availableTableTime)?.map(([time, remaining]) => {
+              if (remaining > 0) {
+                let isDisabled = false;
+                // ตรวจสอบเฉพาะกรณีที่เลือกวันเป็นวันนี้
+                const todayString = new Date().toISOString().split("T")[0];
+                if (formData.date === todayString) {
+                  // สร้าง Date object สำหรับตัวเลือกเวลานั้น (โดยใช้วันที่ที่เลือก)
+                  const optionDateTime = new Date(`${formData.date}T${time}`);
+                  // คำนวณเวลาปัจจุบันบวก 4 ชั่วโมง
+                  const fourHoursLater = new Date(
+                    Date.now() + 4 * 60 * 60 * 1000
+                  );
+                  // ถ้าเวลาที่เลือกน้อยกว่าเวลาปัจจุบัน + 4 ชั่วโมง ให้ disabled ตัวเลือกนั้น
+                  if (optionDateTime < fourHoursLater) {
+                    isDisabled = true;
+                  }
+                }
+                return (
+                  <option key={time} value={time} disabled={isDisabled}>
                     {time} ({remaining} table{remaining > 1 ? "s" : ""}{" "}
                     available)
                   </option>
-                )
-            )}
+                );
+              }
+              return null;
+            })}
           </select>
         </div>
 
