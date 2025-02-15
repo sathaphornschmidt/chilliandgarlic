@@ -29,6 +29,7 @@ const AdminDashboard: React.FC = () => {
   const [isSortedByDate, setIsSortedByDate] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [rowsPerPage] = useState<number>(5);
+  const now = new Date();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -104,16 +105,19 @@ const AdminDashboard: React.FC = () => {
   };
 
   // ฟังก์ชันตรวจสอบว่าเวลาการจองผ่านไปแล้วหรือไม่ (Expired)
+  const formatTime = (time: string) => {
+    // If time is in "HH:mm" format, append ":00"
+    return time.split(":").length === 2 ? `${time}:00` : time;
+  };
+
   const isPastReservation = (date: string, time: string) => {
-    const reservationDateTime = new Date(`${date}T${time}`);
-    // Debug: log ค่า reservationDateTime และ current time
-    console.log(
-      "Reservation DateTime:",
-      reservationDateTime,
-      "Current Time:",
-      new Date()
-    );
-    return reservationDateTime < new Date();
+    const reservationTime = formatTime(time);
+    const reservationDate = date.split("T")[0];
+    const reservationDateTimeString = `${reservationDate}T${reservationTime}`;
+
+    const reservationDateTime = new Date(reservationDateTimeString);
+    const now = new Date();
+    return reservationDateTime < now;
   };
 
   const filteredReservations = reservations
@@ -234,7 +238,7 @@ const AdminDashboard: React.FC = () => {
                     >
                       {res.status === "canceled"
                         ? `Canceled by ${res.canceled_by}`
-                        : isExpired
+                        : isPastReservation(res.date, res.time)
                         ? "Expired"
                         : res.status === "booked"
                         ? "Booked"
