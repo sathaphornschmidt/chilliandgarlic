@@ -97,6 +97,25 @@ const ReservationDetail = () => {
     }
   };
 
+  const handleChangeDate = (e: any) => {
+    const { id, value } = e.target;
+    if (id === "date") {
+      const selectedDate = value;
+      if (!selectedDate) return;
+
+      const selectedDay = new Date(selectedDate).getDay();
+      if (selectedDay === 0 || selectedDay === 1) {
+        alert(
+          "Chilli and Garlic is closed on Sundays and Mondays. Please choose another day."
+        );
+        return;
+      }
+    }
+
+    setFormData({ ...formData, date: value });
+    handleGetAvailabilityTableOnDate(value);
+  };
+
   const handleChange = (e: any) => {
     const { id, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [id]: value }));
@@ -208,7 +227,7 @@ const ReservationDetail = () => {
             id="date"
             readOnly={isReservationCanceled()}
             value={formData.date}
-            onChange={handleChange}
+            onChange={handleChangeDate}
             required
             min={todayString} // ไม่ให้เลือกวันที่ที่ผ่านมาแล้ว
           />
