@@ -22,6 +22,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/reservations/:id" element={<ReservationDetailPage />} />
+        <Route path="/r/:token" element={<ReservationDetailPage />} />
         <Route
           path="/login"
           element={<AdminLogin setAuth={setIsAuthenticated} />}

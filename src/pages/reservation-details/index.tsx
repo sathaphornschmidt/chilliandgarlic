@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Navbar from "../../components/layout/nav/Navbar";
 import axios from "axios";
-import "./style.css"; // Ensure the CSS file is imported
-import { formatDateTime } from "../../utils/formatTime";
+import "./style.css";
 import {
   IReservation,
   ReservationStatus,
 } from "../../abstractions/IReservation";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const ReservationDetail = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const { id, token } = useParams();
+  const reservationKey = token || id;
+
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [expired, setExpired] = useState(false);
@@ -37,15 +39,23 @@ const ReservationDetail = () => {
   useEffect(() => {
     const fetchReservation = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5050/reservations/${id}`
-        );
+        const url = token
+          ? `${API_BASE_URL}/reservations/token/${token}`
+          : `${API_BASE_URL}/reservations/${id}`;
+
+        const response = await axios.get(url);
 
         if (response.data && response.data.reservation) {
           const reservation = response.data.reservation;
-          setOriginalData(reservation);
+          setOriginalData({
+            name: reservation.name,
+            email: reservation.email,
+            phone: reservation.phone,
+            date: new Date(reservation.date).toLocaleDateString("en-CA"),
+            time: reservation.time,
+            guests: reservation.number_of_guests,
+          });
 
-          // แปลงวันที่ให้อยู่ในรูปแบบ "YYYY-MM-DD" โดยใช้ toLocaleDateString('en-CA')
           const formattedDate = new Date(reservation.date).toLocaleDateString(
             "en-CA"
           );
@@ -61,7 +71,7 @@ const ReservationDetail = () => {
 
           setCurrentReservation(reservation);
 
-          handleGetAvailabilityTableOnDate(formattedDate);
+          await handleGetAvailabilityTableOnDate(formattedDate);
           setLoading(false);
         } else {
           throw new Error("No reservation data received");
@@ -75,13 +85,13 @@ const ReservationDetail = () => {
       }
     };
 
-    if (id) fetchReservation();
-  }, [id, navigate]);
+    if (reservationKey) fetchReservation();
+  }, [id, token, reservationKey]);
 
   const handleGetAvailabilityTableOnDate = async (date: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:5050/table-availability/${date}`
+        `${API_BASE_URL}/table-availability/${date}`
       );
       setAvailableTableTime(response.data["table-availability"]);
     } catch (error) {
@@ -97,8 +107,9 @@ const ReservationDetail = () => {
     }
   };
 
-  const handleChangeDate = (e: any) => {
+  const handleChangeDate = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
+
     if (id === "date") {
       const selectedDate = value;
       if (!selectedDate) return;
@@ -116,24 +127,26 @@ const ReservationDetail = () => {
     handleGetAvailabilityTableOnDate(value);
   };
 
-  const handleChange = (e: any) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { id, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [id]: value }));
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: id === "guests" ? Number(value) : value,
+    }));
   };
 
   const hasChanges = JSON.stringify(formData) !== JSON.stringify(originalData);
 
   const handleUpdate = useCallback(
-    async (e: any) => {
+    async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       const isAdmin = !!localStorage.getItem("isAuthenticated");
 
       if (!hasChanges) return;
 
-      console.log(isAdmin);
-      console.log(formData.guests);
       if (!isAdmin && formData.guests > 8) {
-        console.log("heyy gg");
         const cateringConfirm = window.confirm(
           "Sorry, we have a limited number of guests. Are you interesting in trying our catering service?"
         );
@@ -152,13 +165,19 @@ const ReservationDetail = () => {
       if (!confirmation) return;
 
       try {
-        await axios.patch(`http://localhost:5050/reservations/${id}`, {
+        if (!currentReservation?.id) {
+          alert("Reservation not found.");
+          return;
+        }
+
+        await axios.patch(`${API_BASE_URL}/reservations/${currentReservation.id}`, {
           reservation: {
             date: formData.date,
             time: formData.time,
             number_of_guests: formData.guests,
           },
         });
+
         alert("Your booking information has been successfully updated!");
         window.location.reload();
       } catch (error) {
@@ -166,7 +185,7 @@ const ReservationDetail = () => {
         alert("An error occurred. Unable to update your booking information.");
       }
     },
-    [id, formData, hasChanges]
+    [currentReservation?.id, formData, hasChanges]
   );
 
   const isReservationCanceled = (): boolean =>
@@ -180,8 +199,13 @@ const ReservationDetail = () => {
     if (!confirmation) return;
 
     try {
+      if (!currentReservation?.id) {
+        alert("Reservation not found.");
+        return;
+      }
+
       await axios.put(
-        `http://localhost:5050/reservations/${id}/cancel`,
+        `${API_BASE_URL}/reservations/${currentReservation.id}/cancel`,
         undefined,
         { withCredentials: true }
       );
@@ -191,7 +215,7 @@ const ReservationDetail = () => {
       console.error("Error deleting reservation:", error);
       alert("An error occurred. Unable to cancel your booking.");
     }
-  }, [id, formData]);
+  }, [currentReservation?.id, formData]);
 
   if (loading)
     return <div className="loading">Loading reservation details...</div>;
@@ -200,7 +224,6 @@ const ReservationDetail = () => {
   if (expired)
     return <div className="expired">⏳ This reservation has expired.</div>;
 
-  // คำนวณวันที่ปัจจุบันในรูปแบบ "YYYY-MM-DD" โดยใช้ toLocaleDateString('en-CA')
   const todayString = new Date().toLocaleDateString("en-CA");
 
   return (
@@ -246,7 +269,7 @@ const ReservationDetail = () => {
             value={formData.date}
             onChange={handleChangeDate}
             required
-            min={todayString} // ไม่ให้เลือกวันที่ที่ผ่านมาแล้ว
+            min={todayString}
           />
 
           <label htmlFor="time">Time (16:00 - 21:00):</label>
@@ -261,7 +284,7 @@ const ReservationDetail = () => {
             {Object.entries(availableTableTime)?.map(([time, remaining]) => {
               if (remaining > 0) {
                 let isDisabled = false;
-                // ตรวจสอบเฉพาะเมื่อวันที่ที่เลือกเป็นวันนี้
+
                 if (formData.date === todayString) {
                   const optionDateTime = new Date(`${formData.date}T${time}`);
                   const fourHoursLater = new Date(
@@ -271,6 +294,7 @@ const ReservationDetail = () => {
                     isDisabled = true;
                   }
                 }
+
                 return (
                   <option key={time} value={time} disabled={isDisabled}>
                     {time} ({remaining} table{remaining > 1 ? "s" : ""}{" "}
@@ -300,6 +324,7 @@ const ReservationDetail = () => {
           >
             Update Reservation
           </button>
+
           <button
             type="button"
             disabled={isReservationCanceled()}
