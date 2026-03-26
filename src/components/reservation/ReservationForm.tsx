@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "./style.css";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const ReservationForm = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -77,7 +79,7 @@ const ReservationForm = () => {
     if (!confirmation) return;
 
     try {
-      const response = await axios.post("http://localhost:5050/reservations", {
+      const response = await axios.post(`${API_BASE_URL}/reservations`, {
         reservation: {
           name: formData.name,
           email: formData.email,
@@ -111,7 +113,7 @@ const ReservationForm = () => {
   const handleGetAvailabilityTableOnDate = async (date: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:5050/table-availability/${date}`
+        `${API_BASE_URL}/table-availability/${date}`
       );
       setAvailableTableTime(response.data["table-availability"]);
     } catch (error) {
@@ -201,16 +203,12 @@ const ReservationForm = () => {
             {Object.entries(availableTableTime)?.map(([time, remaining]) => {
               if (remaining > 0) {
                 let isDisabled = false;
-                // ตรวจสอบเฉพาะกรณีที่เลือกวันเป็นวันนี้
                 const todayString = new Date().toISOString().split("T")[0];
                 if (formData.date === todayString) {
-                  // สร้าง Date object สำหรับตัวเลือกเวลานั้น (โดยใช้วันที่ที่เลือก)
                   const optionDateTime = new Date(`${formData.date}T${time}`);
-                  // คำนวณเวลาปัจจุบันบวก 4 ชั่วโมง
                   const fourHoursLater = new Date(
                     Date.now() + 4 * 60 * 60 * 1000
                   );
-                  // ถ้าเวลาที่เลือกน้อยกว่าเวลาปัจจุบัน + 4 ชั่วโมง ให้ disabled ตัวเลือกนั้น
                   if (optionDateTime < fourHoursLater) {
                     isDisabled = true;
                   }

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./style.css"; // นำเข้าไฟล์ CSS ที่อัปเดต
+import "./style.css";
 import axios from "axios";
 
-// Props สำหรับการจัดการ Auth
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 interface AdminLoginProps {
   setAuth: (authState: boolean) => void;
 }
@@ -18,7 +19,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ setAuth }) => {
 
     try {
       await axios.post(
-        "http://localhost:5050/auth/login",
+        `${API_BASE_URL}/auth/login`,
         {
           username: adminID,
           password: password,
@@ -29,7 +30,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ setAuth }) => {
       );
       setAuth(true);
       localStorage.setItem("isAuthenticated", "true");
-      navigate("/admin"); // ไปยังหน้าแอดมิน
+      navigate("/admin");
     } catch (error) {
       console.log(error);
       alert("❌ ID หรือรหัสผ่านไม่ถูกต้อง!");

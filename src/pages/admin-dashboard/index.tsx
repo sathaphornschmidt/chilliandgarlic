@@ -5,6 +5,8 @@ import "./style.css";
 import { formatDateTime } from "../../utils/formatTime";
 import { ReservationStatus } from "../../abstractions/IReservation";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 interface Reservation {
   id: string;
   name: string;
@@ -37,10 +39,9 @@ const AdminDashboard: React.FC = () => {
 
   const fetchReservations = async () => {
     try {
-      const response = await axios.get("http://localhost:5050/reservations", {
+      const response = await axios.get(`${API_BASE_URL}/reservations`, {
         withCredentials: true,
       });
-      // Sorting reservations ตาม created_at หรือ canceled_at ตามที่ต้องการ
       const sortedReservations = response.data.reservations || response.data;
       sortedReservations.sort((a: Reservation, b: Reservation) => {
         return (
@@ -70,7 +71,7 @@ const AdminDashboard: React.FC = () => {
       if (confirmCancel) {
         try {
           await axios.put(
-            `http://localhost:5050/reservations/${id}/cancel`,
+            `${API_BASE_URL}/reservations/${id}/cancel`,
             undefined,
             { withCredentials: true }
           );
@@ -103,12 +104,10 @@ const AdminDashboard: React.FC = () => {
     setIsSortedByDate((prev) => !prev);
   };
 
-  // ถ้า time อยู่ในรูปแบบ "HH:mm" ให้เติม ":00" เพื่อให้เป็น "HH:mm:ss"
   const formatTime = (time: string) => {
     return time.split(":").length === 2 ? `${time}:00` : time;
   };
 
-  // ฟังก์ชันตรวจสอบว่าเวลาการจองผ่านไปแล้วหรือไม่ (Expired)
   const isPastReservation = (date: string, time: string) => {
     const reservationTime = formatTime(time);
     const reservationDate = date.split("T")[0];
@@ -147,7 +146,7 @@ const AdminDashboard: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post("http://localhost:5050/auth/logout", undefined, {
+      await axios.post(`${API_BASE_URL}/auth/logout`, undefined, {
         withCredentials: true,
       });
       localStorage.clear();
@@ -206,19 +205,13 @@ const AdminDashboard: React.FC = () => {
           <tbody>
             {currentReservations.length > 0 ? (
               currentReservations.map((res) => {
-                // ตรวจสอบว่าการจองหมดอายุ (Expired) หรือไม่
                 const isExpired = isPastReservation(res.date, res.time);
-                // แปลงค่า canceled_by เป็นตัวพิมพ์เล็ก ถ้าเป็น null จะได้ ""
                 const canceledByLower = res.canceled_by?.toLowerCase() || "";
-                // ตรวจสอบว่าการจองถูก Cancel และถูกยกเลิกโดย customer หรือ satha
                 const isCanceledNonEditable =
                   res.status === "canceled" &&
                   (canceledByLower === "customer" ||
                     canceledByLower === "satha");
 
-                // กำหนดคลาสให้กับแถว:
-                // ถ้า Cancelled ให้ใช้ "disabled-row" (สีแดง)
-                // ถ้า Expired (แต่ไม่ Cancelled) ให้ใช้ "expired-row" (สีดำ)
                 const rowClass = isCanceledNonEditable
                   ? "disabled-row"
                   : isExpired
